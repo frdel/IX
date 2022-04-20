@@ -1,4 +1,4 @@
-import m from "./lib/Mithril.js";
+import m from "../html/Mithril.js";
 import { Counter, Model as CounterModel } from "./Counter.ts";
 
 export default function Page() {

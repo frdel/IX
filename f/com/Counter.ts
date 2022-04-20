@@ -1,4 +1,4 @@
-import m from "./lib/Mithril.js";
+import m from "../html/Mithril.js";
 
 export type Model = {
   count: number;

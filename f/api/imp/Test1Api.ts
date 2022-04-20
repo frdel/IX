@@ -1,4 +1,4 @@
-import Api from "../com/Api.ts";
+import Api from "../def/Api.ts";
 
 export type Input = {
   var1: string;

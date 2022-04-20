@@ -1,27 +1,17 @@
 // r/mod.ts
 
-import * as incl from "./incl.js";
-import * as incl2 from "./rin/incl2.ts";
-//import * as incl3 from "../b/incl2.ts";
-import { Input, Output, Test1 } from "./api/Test1Api.ts";
+import * as incl from "./test/incl.js";
+import * as incl2 from "./test/incl2.ts";
 
-import m from "./lib/Mithril.js";
+import { Input, Output, Test1 } from "./api/imp/Test1Api.ts";
+
+import m from "./html/Mithril.js";
 
 console.log(m);
 
 console.log(incl.default.echo());
 console.log(incl2.default.echo("| added"));
-//console.log(incl3.default());
 
-// window.apiTest1 = async function () {
-//   const inp: Input = {
-//     var1: "this in",
-//     var2: 6,
-//   };
-//   const out = await Test1.prototype.callApi(inp);
-//   console.log(out);
-// };
-
-import Page from "./Page.ts";
+import Page from "./com/Page.ts";
 
 m.mount(document.body, Page);
