@@ -51,7 +51,7 @@ export function setHandlers(router: lib.Oak.Router) {
     const js = fetchScript(jsFile);
 
     //inject js initializer into html
-    const parts = (await html).split("//S7_PRELOAD");
+    const parts = (await html).split("//IX_PRELOAD");
     const code = parts[0] + await js + parts[1]; //string replace not safe
 
     //return resulting code and mime
