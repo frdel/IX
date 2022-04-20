@@ -3,7 +3,9 @@ import { Counter, Model as CounterModel } from "./Counter.ts";
 
 export default function Page() {
   const cd: CounterModel = {
-    count: 7,
+    count: 45,
+    min: 0,
+    max: 250,
   };
 
   return {
@@ -15,6 +17,16 @@ export default function Page() {
         placeholder: "Number",
         oninput: (e: Event) => {
           cd.count = parseInt((e.target as HTMLInputElement).value);
+        },
+      }),
+      m("input.multi-range", {
+        type: "range",
+        min: cd.min,
+        max: cd.max,
+        value: cd.count,
+        oninput: (e: Event) => {
+          cd.count = parseInt((e.target as HTMLInputElement).value);
+          Math.max(cd.min, Math.min(cd.count, cd.max));
         },
       }),
       m(Counter, cd),

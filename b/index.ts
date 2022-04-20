@@ -5,6 +5,10 @@ const startServer = async function () {
   const app = new lib.oak.Application();
   const router = new lib.oak.Router();
 
+  router.get("/restart", async function (ctx) {
+    Deno.exit();
+  });
+
   router.get("/(.+)", async function (ctx) {
     const file = `./f${ctx.request.url.pathname}`;
     let ext = lib.Path.extname(file);
@@ -33,18 +37,18 @@ const startServer = async function () {
       Record<string, any>
     >,
   ) {
+    console.log(lib.Path.resolve("./f/index.html"));
+
     let html = await Deno.readTextFile("./f/index.html");
 
-    const bundle = true;
+    const bundle = false;
     const file = `./f/index.ts`;
 
     const incl = await fetchScript(file, bundle);
-    console.log(incl.length);
-
+    // console.log(incl.length);
 
     const parts = html.split("//S7_PRELOAD");
     html = parts[0] + incl + parts[1]; //string replace not safe
-
 
     const mime = "text/html";
 
@@ -52,7 +56,12 @@ const startServer = async function () {
     ctx.response.body = html;
   }
 
+  const scriptCache = new Map<string, string>();
+  const caching = false;
+
   async function fetchScript(path: string, bundle: boolean): Promise<string> {
+    if (caching && scriptCache.has(path)) return scriptCache.get(path) || "";
+
     const bun = await Deno.emit(path, {
       bundle: bundle ? "module" : undefined,
       check: false,
@@ -70,7 +79,9 @@ const startServer = async function () {
         lib.Path.extname(path) == ".ts" || lib.Path.extname(path) == ".jsx"
           ? ".js"
           : "";
-      const absPath = "file://" + lib.Path.resolve(path) + pos;
+      const absPath = ("file://" +
+        lib.Path.resolve(path) + pos).replace(/ /g, "%20");
+      scriptCache.set(path, bun.files[absPath]);
       return bun.files[absPath];
     } else {
       const bundleFile = bun.files["deno:///bundle.js"];
@@ -87,6 +98,7 @@ const startServer = async function () {
           console.log("OK " + source);
         }
       }
+      scriptCache.set(path, bundleFile);
       return bundleFile;
     }
   }

@@ -2,6 +2,8 @@ import m from "./lib/Mithril.js";
 
 export type Model = {
   count: number;
+  min: number;
+  max: number;
 };
 
 export function Counter(node: any) {
@@ -10,7 +12,7 @@ export function Counter(node: any) {
   // };
 
   const d: Model = node.attrs || { count: 0 };
-  let count = 6;
+  // let count = 6;
 
   function increment() {
     d.count++;
@@ -24,6 +26,27 @@ export function Counter(node: any) {
     d.count = 0;
     // count = 0;
   }
+
+  function setByButton(params: any) {
+    d.count = params.target.dataset.count;
+  }
+
+  function buildButtons(count: number) {
+    const result = [];
+    for (let i = 1; i <= d.max; i++) {
+      const style = i <= count ? ".btn-primary" : ".btn-secondary";
+      result.push(
+        m(`button.btn ${style} .m-1`, {
+          type: "button",
+          onclick: setByButton,
+          key: i,
+          "data-count": i,
+        }, i),
+      );
+    }
+    return m("", result);
+  }
+
   return {
     view: () => [
       m("", "Counter component:"),
@@ -51,6 +74,7 @@ export function Counter(node: any) {
             onclick: reset,
           }, "Reset"),
         ]),
+        buildButtons(d.count),
       ]),
     ],
   };
