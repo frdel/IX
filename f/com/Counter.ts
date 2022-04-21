@@ -1,4 +1,4 @@
-import m from "../html/Mithril.js";
+import m from "../html/Mithril.ts";
 
 export type Model = {
   count: number;
@@ -6,25 +6,30 @@ export type Model = {
   max: number;
 };
 
-export function Counter(node: any) {
-  // const d: Model = {
-  //   count: 8,
-  // };
+//envelope
+Counter.create = (model?: Model) => m(Counter, { model });
 
-  const d: Model = node.attrs || { count: 0 };
-  // let count = 6;
+export default function Counter(this: any, node: any) {
+  //passed model
+  let d: Model = node.attrs.model;
+
+  //default model
+  if (!d) {
+    d = {
+      min: 0,
+      max: 20,
+      count: 5,
+    };
+  }
 
   function increment() {
     d.count++;
-    // count++;
   }
   function decrement() {
     d.count--;
-    // count--;
   }
   function reset() {
     d.count = 0;
-    // count = 0;
   }
 
   function setByButton(params: any) {
@@ -56,7 +61,7 @@ export function Counter(node: any) {
           // value: count,
           class: "form-control",
           placeholder: "Number",
-          onchange: (e: Event) => {
+          oninput: (e: Event) => {
             d.count = parseInt((e.target as HTMLInputElement).value);
           },
         }),

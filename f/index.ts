@@ -5,7 +5,7 @@ import * as incl2 from "./test/incl2.ts";
 
 import { Input, Output, Test1 } from "./api/imp/Test1Api.ts";
 
-import m from "./html/Mithril.js";
+import m from "./html/Mithril.ts";
 
 console.log(m);
 

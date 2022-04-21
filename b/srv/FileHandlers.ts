@@ -16,6 +16,12 @@ export function setHandlers(router: lib.Oak.Router) {
     ctx.response.type = index.mime;
   });
 
+  router.get(`/html/bundle.css`, async function (ctx) {
+    const css = await fetchCSSBundle();
+    ctx.response.type = "text/css";
+    ctx.response.body = css;
+  });
+
   //javascript and typescript files, here we do transpiling, bundling and caching
   //todo merge path-to-regex into one
   router.get(`/(.+)(\.js$)`, async function (ctx) {
@@ -34,10 +40,14 @@ export function setHandlers(router: lib.Oak.Router) {
 
   //other files, return text content and mime type by extension
   router.get("/(.+)", async function (ctx) {
-    const file = filePath(ctx.request.url.pathname);
-    const ext = lib.Path.extname(file) || `.txt`;
-    ctx.response.type = lib.Lookup(ext);
-    ctx.response.body = await Deno.readTextFile(file);
+    // const file = filePath(ctx.request.url.pathname);
+    // const ext = lib.Path.extname(file) || `.txt`;
+    // ctx.response.type = lib.Lookup(ext);
+    // ctx.response.body = await Deno.readTextFile(file);
+    await ctx.send({
+      root: feFolder,
+      index: ctx.request.url.pathname,
+    });
   });
 
   //return index html with JS initializer injected
@@ -49,14 +59,42 @@ export function setHandlers(router: lib.Oak.Router) {
     //load index html and js files
     const html = Deno.readTextFile(htmlFile);
     const js = fetchScript(jsFile);
+    const css = fetchCSSBundle();
 
     //inject js initializer into html
-    const parts = (await html).split("//IX_PRELOAD");
-    const code = parts[0] + await js + parts[1]; //string replace not safe
+    const parts = (await html).split("<!--IX_PRELOAD-->");
+    const code = parts[0] +
+      `<script type="module">` +
+      await js +
+      `</script>` +
+      `<style>` +
+      await css +
+      `</style>` +
+      parts[1]; //string replace not safe
 
     //return resulting code and mime
     const mime = "text/html";
     return { mime, code };
+  }
+
+  //bundle all CSS files in /html together
+  async function fetchCSSBundle() {
+    //todo caching
+    const folder = filePath("html/");
+    const files = Deno.readDir(folder);
+    const promises: Promise<string>[] = [];
+    let result = "";
+    for await (const file of files) {
+      if (file.isFile && lib.Path.extname(file.name) == ".css") {
+        promises.push(Deno.readTextFile(filePath("html/" + file.name)));
+      }
+    }
+    const cssFiles = await Promise.all(promises);
+    for (const css of cssFiles) {
+      result += "\n" + css;
+    }
+
+    return result;
   }
 
   //todo caching and bundling
