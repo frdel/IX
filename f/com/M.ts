@@ -1,14 +1,28 @@
-export default function M<T extends Object>(data: T): T {
+interface OnChange {
+  (model: Object, key: string | symbol, value: any): void;
+}
+
+export default function M<T extends Object>(data: T, onChange?: OnChange): T {
   const proxy = new Proxy<T>(data, {
+    //proxy setter
     set: function (target, key, value) {
+      //write changes to model
       (<Record<string, unknown>> target)[<string> key] = value;
-      reflectLinks(target);
+
+      //call handler function if any
+      if (typeof (onChange) == "function") onChange(target, key, value);
+
+      //change other linked models
+      reflectLinks(target, key);
+
       return true;
     },
   });
+  //result
   return proxy;
 }
 
+//link between fields of two models
 type Link = {
   fieldA: string;
   modelB: any;
@@ -30,12 +44,14 @@ M.linkModels = function (
   modelB.modelLinks.push({ fieldA: fieldB, modelB: modelA, fieldB: fieldA });
 };
 
-function reflectLinks(model: any) {
+function reflectLinks(model: any, key: string | symbol) {
   if (model.modelLinks) {
     for (const link of <Link[]> model.modelLinks) {
-      let a = model[link.fieldA];
-      let b = link.modelB[link.fieldB];
-      if (a != b) link.modelB[link.fieldB] = a;
+      if (link.fieldA == key) {
+        let a = model[link.fieldA];
+        let b = link.modelB[link.fieldB];
+        if (a != b) link.modelB[link.fieldB] = a;
+      }
     }
   }
 }

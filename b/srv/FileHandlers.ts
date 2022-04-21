@@ -55,22 +55,29 @@ export function setHandlers(router: lib.Oak.Router) {
     //landing page file paths
     const htmlFile = filePath("html/index.html");
     const jsFile = filePath("index.ts");
+    const bsFile = filePath("html/bootstrap.bundle.min.js");
 
     //load index html and js files
     const html = Deno.readTextFile(htmlFile);
     const js = fetchScript(jsFile);
+    const bs = Deno.readTextFile(bsFile);
     const css = fetchCSSBundle();
 
     //inject js initializer into html
     const parts = (await html).split("<!--IX_PRELOAD-->");
     const code = parts[0] +
-      `<script type="module">` +
+      `\n<script type="module">` +
       await js +
-      `</script>` +
-      `<style>` +
+      `\n</script>` +
+      `\n<script>` +
+      await bs +
+      `\n</script>` +
+      `\n<style>` +
       await css +
-      `</style>` +
+      `\n</style>` +
       parts[1]; //string replace not safe
+
+    // const code = await html;
 
     //return resulting code and mime
     const mime = "text/html";
@@ -99,8 +106,8 @@ export function setHandlers(router: lib.Oak.Router) {
 
   //todo caching and bundling
   const scriptCache = new Map<string, string>();
-  const caching = false;
-  const bundle = false;
+  const caching = Deno.args.indexOf("--ix-no-cache") < 0;
+  const bundle = Deno.args.indexOf("--ix-no-bundle") < 0;
 
   async function fetchScript(path: string): Promise<string> {
     if (caching && scriptCache.has(path)) return scriptCache.get(path) || "";
