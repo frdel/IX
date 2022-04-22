@@ -18,7 +18,7 @@ export default class Slider extends Component<Data>() {
 	}
 
 	render() {
-		return [
+		return m("div", [
 			m(
 				"label.form-label[for='customRange1']",
 				(this.data.text || "") + " " + (this.data.value || ""),
@@ -35,6 +35,6 @@ export default class Slider extends Component<Data>() {
 					this.data.value = val;
 				},
 			}),
-		];
+		]);
 	}
 }

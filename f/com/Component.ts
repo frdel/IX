@@ -1,9 +1,9 @@
 import m from "../html/Mithril.ts";
-import M from "./M.ts";
+import Model from "./Model.ts";
 
 export default function Component<D>() {
 	interface OnChange {
-		(model: D, key: string, value: any): void;
+		(model: D, key: string, value: any, previous: any): void;
 	}
 
 	interface LinkModels {
@@ -34,11 +34,6 @@ export default function Component<D>() {
 			//enhace to PreComponent
 			em.data = data;
 
-			em.linkModels = function (fieldA: string, componentB: Component, fieldB: string) {
-				M.linkModels(data, fieldA, componentB.data, fieldB);
-				return em;
-			};
-
 			//return as PreComponent
 			return <PreComponent> em;
 		}
@@ -66,7 +61,7 @@ export default function Component<D>() {
 
 		private initialize(vnode: any) {
 			//initialize model and set onChange
-			this.data = M(
+			this.data = Model(
 				vnode.attrs._data || <D> {},
 				typeof vnode.attrs._meta?.onChange == "function" ? (...p) => vnode.attrs._meta?.onChange(...p) : undefined,
 			);

@@ -4,7 +4,6 @@ import Toolbar from "./Toolbar.ts";
 import Sidebar from "./Sidebar.ts";
 import Button from "./Button.ts";
 import Slider from "./Slider.ts";
-import M from "./M.ts";
 // import NavItem from "./NavItem.ts";
 
 export default function Page() {
@@ -30,13 +29,22 @@ export default function Page() {
 	const cd = {
 		count: 10,
 		min: 0,
-		max: 100,
+		max: 25,
+		text: "Bound counter1",
 	};
 
 	const cd2 = {
-		count: 10,
+		count: 0,
 		min: 0,
-		max: 100,
+		max: 15,
+		text: "Bound counter2",
+	};
+
+	const cd3 = {
+		count: 2,
+		min: 0,
+		max: 15,
+		text: "Free counter",
 	};
 
 	//slider model
@@ -44,11 +52,8 @@ export default function Page() {
 		min: cd.min,
 		max: cd.max,
 		value: cd.count,
-		text: "Slider",
+		text: "Master slider",
 	};
-
-	//link slider and counter models
-	M.linkModels(cd, "count", sd, "value");
 
 	return {
 		view: () => [
@@ -116,15 +121,17 @@ export default function Page() {
 								m("", [
 									// m(Counter),
 
-									Slider.m(sd),
+									Slider.m(sd, (model) => {
+										cd.count = <number> model.value;
+										cd2.count = cd.count;
+									}),
 									// Button.m({ text: "Btn", key: "abc" }),
-									Counter.m(),
 									Counter.m(cd),
 									Counter.m(cd2),
 
-									Counter.m(),
+									Counter.m(cd3),
 									m(Counter),
-									Counter.m({ count: 8, min: 0, max: 15 }),
+									Counter.m({ count: 8, min: 0, max: 15, text: "Locked counter" }),
 									// Counter.create({ count: 2, min: 0, max: 10 }),
 									// Component.crea‹te<Counter>();
 								]),
