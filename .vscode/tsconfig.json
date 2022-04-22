@@ -1,5 +1,29 @@
 {
   "compilerOptions": {
     "lib": ["ESNext", "dom", "dom.iterable", "dom.asynciterable", "deno.ns", "deno.unstable"]
+  },
+  "lint": {
+    "files": {
+      "include": ["/"]
+      // "exclude": ["src/testdata/"]
+    },
+    "rules": {
+      "tags": ["recommended"],
+      // "include": ["ban-untagged-todo"],
+      "exclude": ["no-explicit-any"]
+    }
+  },
+  "fmt": {
+    "files": {
+      "include": ["/"]
+      // "exclude": ["src/testdata/"]
+    },
+    "options": {
+      "useTabs": true,
+      "lineWidth": 160,
+      "indentWidth": 4,
+      "singleQuote": false,
+      "proseWrap": "preserve"
+    }
   }
 }

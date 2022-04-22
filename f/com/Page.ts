@@ -33,7 +33,7 @@ export default function Page() {
         m(
           "div.container-fluid",
           m("div.row", [
-            Sidebar.create(),
+            Sidebar.m(),
 
             // m(
             //   "nav.col-md-3.col-lg-2.d-md-block.bg-light.sidebar.collapse[id='sidebarMenu']",
@@ -92,13 +92,13 @@ export default function Page() {
                 m("", [
                   // m(Counter),
 
-                  Slider.create(sd),
+                  Slider.m(sd),
 
-                  Button.create({ text: "Btn", key: "abc" }),
+                  Button.m({ text: "Btn", key: "abc" }),
 
-                  Counter.create(cd),
-                  Counter.create(cd),
-                  Counter.create(),
+                  Counter.m(cd),
+                  Counter.m(cd),
+                  Counter.m(),
                   m(Counter),
                   // Counter.create({ count: 2, min: 0, max: 10 }),
                   // Component.crea‹te<Counter>();

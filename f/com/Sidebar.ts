@@ -2,7 +2,7 @@ import m from "../html/Mithril.ts";
 import NavItem from "./NavItem.ts";
 
 //envelope
-Sidebar.create = () => m(Sidebar, {});
+Sidebar.m = () => m(Sidebar, {});
 
 export default function Sidebar() {
   return {
@@ -11,9 +11,9 @@ export default function Sidebar() {
         "nav.col-md-3.col-lg-2.d-md-block.bg-light.sidebar.collapse[id='sidebarMenu']",
         m("div.position-sticky.pt-3", [
           m("ul.nav.flex-column", [
-            NavItem.create({ text: "First navitem", href: "##" }),
-            NavItem.create({ text: "Second navitem", href: "##" }),
-            NavItem.create({ text: "Third navitem", href: "##" }),
+            NavItem.m({ text: "First navitem", href: "##" }),
+            NavItem.m({ text: "Second navitem", href: "##" }),
+            NavItem.m({ text: "Third navitem", href: "##" }),
 
             m(
               "li.nav-item",

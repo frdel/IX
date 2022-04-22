@@ -1,38 +1,40 @@
 import m from "../html/Mithril.ts";
 
-export type Model = {
-  href?: string;
-  text?: string;
-  css?: string;
-  key?: string;
+export type Data = {
+	href?: string;
+	text?: string;
+	css?: string;
+	key?: string;
 };
 
 //envelope
-Button.create = (model?: Model) => m(Button, { model });
+Button.m = (data?: Data) => m(Button, { _data: data });
 
-export default function Button(this: any, vnode: any) {
-  //default data
-  let data: Model = vnode.attrs.model || {
-    href: "#",
-    command: "",
-    text: "Text",
-    css: "",
-    spanCSS: "",
-  };
+export default function Button(vnode: any) {
+	//passed data
+	let d: Data = vnode.attrs._data;
 
-  const handleButton = function (e: Event) {
-    alert(e.target?.dataset?.key);
-  };
+	//default data
+	if (!d) {
+		d = {
+			href: "#",
+			text: "Button",
+		};
+	}
 
-  //render
-  return {
-    view: () => [
-      m(`button.btn ${data.css}`, {
-        type: "button",
-        onclick: handleButton,
-        key: data.key,
-        "data-key": data.key,
-      }, data.text),
-    ],
-  };
+	const handleButton = function (e: Event) {
+		alert((<any> e.target).dataset?.key);
+	};
+
+	//render
+	return {
+		view: () => [
+			m(`button.btn ${d.css}`, {
+				type: "button",
+				onclick: handleButton,
+				key: d.key,
+				"data-key": d.key,
+			}, d.text),
+		],
+	};
 }
