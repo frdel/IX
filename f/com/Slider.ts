@@ -13,7 +13,7 @@ export type Data = {
 	onChange?: OnChange;
 };
 
-export default class Slider extends Component<Data>() {
+export default class Slider extends Component<Data, Data>() {
 	fixData() {
 	}
 

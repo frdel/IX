@@ -1,7 +1,7 @@
 import m from "../html/Mithril.ts";
 import Model from "./Model.ts";
 
-export default function Component<D>() {
+export default function Component<D, I>() {
 	interface OnChange {
 		(model: D, key: string, value: any, previous: any): void;
 	}
@@ -16,7 +16,6 @@ export default function Component<D>() {
 
 	type PreComponent = {
 		data: D;
-		linkModels: LinkModels;
 	};
 
 	abstract class Component {
@@ -24,7 +23,7 @@ export default function Component<D>() {
 
 		data = <D> {};
 
-		static m(data?: D, onChange?: OnChange) {
+		static m(data?: I, onChange?: OnChange) {
 			//build meta structure
 			const meta: Meta = { onChange };
 
@@ -38,25 +37,27 @@ export default function Component<D>() {
 			return <PreComponent> em;
 		}
 
-		// constructor(vnode: any) {
-		// 	this.data = M(vnode.attrs._data);
-		// 	this.copyData(vnode);
-		// }
-
+		//mithril renrering
 		private view(vnode: any) {
 			this.copyData(vnode);
 			return this.render(vnode);
 		}
 
+		//copy data from vnode - from parent
 		private copyData(vnode: any) {
 			//initialize model if needed
 			if (!this.initialized) this.initialize(vnode);
 
-			//copy fields to model
-			Object.assign(this.data, vnode.attrs._data);
+			//copy input fields to model
+			this.copyInput(vnode.attrs._data);
 
 			// this.data = vnode.attrs._data;
 			this.fixData();
+		}
+
+		//copy input fields to model
+		protected copyInput(input: I) {
+			Object.assign(this.data, input);
 		}
 
 		private initialize(vnode: any) {

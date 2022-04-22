@@ -6,7 +6,7 @@ type Data = {
 	css?: string;
 };
 
-export default class Span extends Component<Data>() {
+export default class Span extends Component<Data, Data>() {
 	fixData() {
 		//default data
 		if (!this.data.css) this.data.css = "";

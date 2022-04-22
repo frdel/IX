@@ -6,7 +6,7 @@ type Data = {
 	css?: string;
 };
 
-export default class CopyMe extends Component<Data>() {
+export default class CopyMe extends Component<Data, Data>() {
 	fixData() {
 		//default data
 		if (!this.data.css) this.data.css = "";

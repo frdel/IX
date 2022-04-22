@@ -44,8 +44,10 @@ export default function Page() {
 		count: 2,
 		min: 0,
 		max: 15,
-		text: "Free counter",
+		text: "Slave counter",
 	};
+
+	let cd4: number;
 
 	//slider model
 	const sd = {
@@ -118,7 +120,7 @@ export default function Page() {
 							"main.col-md-9.ms-sm-auto.col-lg-10.px-md-4",
 							m(
 								"div.d-flex.justify-content-between.flex-wrap.flex-md-nowrap.align-items-center.pt-3.pb-2.mb-3.border-bottom",
-								m("", [
+								m("div.grid", [
 									// m(Counter),
 
 									Slider.m(sd, (model) => {
@@ -126,14 +128,25 @@ export default function Page() {
 										cd2.count = cd.count;
 									}),
 									// Button.m({ text: "Btn", key: "abc" }),
-									Counter.m(cd),
-									Counter.m(cd2),
 
-									Counter.m(cd3),
-									m(Counter),
-									Counter.m({ count: 8, min: 0, max: 15, text: "Locked counter" }),
-									// Counter.create({ count: 2, min: 0, max: 10 }),
-									// Component.crea‹te<Counter>();
+									m("div.row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-2 row-cols-xl-3", [
+										m("div.col.mb-3", Counter.m(cd)),
+										m("div.col.mb-3", Counter.m(cd2)),
+
+										m("div.col.mb-3", Counter.m(cd3)),
+										m(
+											"div.col.mb-3",
+											Counter.m({ min: 2, text: "Master counter" }, (model) => {
+												cd3.count = model.count;
+												cd4 = model.count;
+											}),
+										),
+
+										m("div.col.mb-3", m(Counter)),
+										m("div.col.mb-3", Counter.m({ count: 8, min: 0, max: 15, text: "Locked counter" })),
+										// Counter.create({ count: 2, min: 0, max: 10 }),
+										// Component.crea‹te<Counter>();
+									]),
 								]),
 							),
 						),

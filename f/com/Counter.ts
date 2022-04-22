@@ -3,28 +3,27 @@ import Button from "./Button.ts";
 import Component from "./Component.ts";
 import Span from "./Span.ts";
 import Slider from "./Slider.ts";
+import ProgressBar from "./ProgressBar.ts";
 
 export type Data = {
 	count: number;
 	min: number;
 	max: number;
+	text: string;
+};
+
+export type Input = {
+	count?: number;
+	min?: number;
+	max?: number;
 	text?: string;
 };
 
-export default class Counter extends Component<Data>() {
+export default class Counter extends Component<Data, Input>() {
 	oninit() {
 	}
 
 	fixData() {
-		if (!this.data || Object.keys(this.data).length == 0) {
-			this.data = {
-				min: 0,
-				max: 20,
-				count: 5,
-				text: "",
-			};
-		}
-
 		if (!this.data.count) this.data.count = 0;
 		if (!this.data.min) this.data.min = 0;
 		if (!this.data.max) this.data.max = 10;
@@ -49,13 +48,15 @@ export default class Counter extends Component<Data>() {
 		const result = [];
 		for (let i = 1; i <= this.data.max; i++) {
 			const btnType = i <= count ? Button.type.Primary : Button.type.Secondary;
-			result.push(Button.m({ type: btnType, key: i, text: i.toString(), onclick: () => this.setByButton(i) }));
+			result.push(
+				Button.m({ type: btnType, key: i, css: "col m-1", text: i.toString(), onclick: () => this.setByButton(i) }),
+			);
 		}
-		return m("", result);
+		return m(".div.row row-cols-6", result);
 	}
 
 	render(vnode: any) {
-		return m("div.container.mt-5", [
+		return m("div.container.border.p-3", [
 			m("h4", this.data.text),
 			m(".input-group .mb-3", [
 				m("input.counter", {
@@ -68,7 +69,7 @@ export default class Counter extends Component<Data>() {
 					},
 				}),
 				m(".input-group-append", [
-					Button.m({ type: Button.type.Success, onclick: () => this.increment(), text: "+" }),
+					Button.m({ type: Button.type.Success, onclick: () => this.increment(), icon: "bi-file-plus" }),
 					Button.m({ type: Button.type.Warning, onclick: () => this.decrement(), text: "-" }),
 					Button.m({ type: Button.type.Danger, onclick: () => this.reset(), text: "0" }),
 				]),
@@ -76,6 +77,7 @@ export default class Counter extends Component<Data>() {
 			this.buildButtons(this.data.count),
 
 			Span.m({ text: this.data.count.toString(), css: "text-danger" }),
+			ProgressBar.m({ ratio: (this.data.count - this.data.min) / (this.data.max - this.data.min) }),
 			Slider.m(
 				{
 					min: this.data.min,

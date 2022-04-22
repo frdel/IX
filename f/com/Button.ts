@@ -6,6 +6,7 @@ type Data = {
 	href?: string;
 	text?: string;
 	css?: string;
+	icon?: string;
 	key?: any;
 	onclick?: Handler;
 };
@@ -27,7 +28,7 @@ interface Handler {
 	(key: any, event: Event): void;
 }
 
-export default class Button extends Component<Data>() {
+export default class Button extends Component<Data, Data>() {
 	static type = Type;
 
 	fixData() {
@@ -38,6 +39,7 @@ export default class Button extends Component<Data>() {
 		if (!this.data.href) this.data.href = "#";
 		if (!this.data.key) this.data.key = "";
 		if (!this.data.text) this.data.text = "";
+		if (!this.data.icon) this.data.icon = "";
 		if (!this.data.type) this.data.type = Type.None;
 	}
 
@@ -52,7 +54,7 @@ export default class Button extends Component<Data>() {
 	//render
 	render(vnode: any) {
 		return m(`button.btn`, {
-			class: `${this.data.type} ${this.data.css}`,
+			class: `${this.data.type} ${this.data.css} ${this.data.icon}`,
 			type: "button",
 			onclick: (p: any) => this.onclick(p),
 			// key: this.data.key,
