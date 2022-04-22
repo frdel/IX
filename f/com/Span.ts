@@ -6,7 +6,7 @@ type Data = {
 	css?: string;
 };
 
-export default class CopyMe extends Component<Data>() {
+export default class Span extends Component<Data>() {
 	fixData() {
 		//default data
 		if (!this.data.css) this.data.css = "";
@@ -15,9 +15,6 @@ export default class CopyMe extends Component<Data>() {
 
 	//render
 	render(vnode: any) {
-		return m(`div`, {
-			class: this.data.css,
-			"data-key": this.data.text,
-		}, this.data.text);
+		return m(`span`, { class: this.data.css }, this.data.text);
 	}
 }

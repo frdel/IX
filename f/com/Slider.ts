@@ -1,43 +1,40 @@
 import m from "../html/Mithril.ts";
+import Component from "./Component.ts";
+
+interface OnChange {
+	(value: number): any;
+}
 
 export type Data = {
 	text?: string;
 	value?: number;
 	min?: number;
 	max?: number;
+	onChange?: OnChange;
 };
 
-//envelope
-Slider.m = (data?: Data) => m(Slider, { _data: data });
-
-export default function Slider(this: any, vnode: any) {
-	//default data
-	let d: Data = vnode.attrs._data;
-
-	if (!d) {
-		d = {
-			min: 0,
-			max: 100,
-			value: 20,
-			text: "",
-		};
+export default class Slider extends Component<Data>() {
+	fixData() {
 	}
 
-	//render
-	return {
-		view: () => [
+	render() {
+		return [
 			m(
 				"label.form-label[for='customRange1']",
-				(d.text || "") + " " + (d.value || ""),
+				(this.data.text || "") + " " + (this.data.value || ""),
 			),
 			m("input.form-range[type='range'][id='customRange1']", {
-				value: d.value,
-				min: d.min,
-				max: d.max,
+				value: this.data.value,
+				min: this.data.min,
+				max: this.data.max,
 				oninput: (e: Event) => {
-					d.value = parseInt((e.target as HTMLInputElement).value);
+					const val = parseInt((e.target as HTMLInputElement).value);
+					if (typeof this.data.onChange == "function" && val != this.data.value) {
+						this.data.onChange(val);
+					}
+					this.data.value = val;
 				},
 			}),
-		],
-	};
+		];
+	}
 }
