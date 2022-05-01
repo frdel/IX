@@ -35,20 +35,17 @@ export default class Button extends Component<Data, Data>() {
 		//default data
 		if (!this.data) this.data = {};
 
-		if (!this.data.css) this.data.css = "";
-		if (!this.data.href) this.data.href = "#";
-		if (!this.data.key) this.data.key = "";
-		if (!this.data.text) this.data.text = "";
-		if (!this.data.icon) this.data.icon = "";
-		if (!this.data.type) this.data.type = Type.None;
+		this.data.css = this.data.css || "";
+		this.data.href = this.data.href || "#";
+		// this.data.key = this.data.key || "";
+		this.data.text = this.data.text || "";
+		this.data.icon = this.data.icon || "";
+		this.data.type = this.data.type || Type.None;
 	}
 
 	//click handler
 	onclick(e: Event) {
-		if (typeof this.data.onclick == "function") {
-			// const key = (<any> e.target).dataset?.key;
-			this.data.onclick(this.data.key, e);
-		}
+		if (typeof this.data.onclick == "function") this.data.onclick(this.data.key, e);
 	}
 
 	//render
@@ -57,8 +54,6 @@ export default class Button extends Component<Data, Data>() {
 			class: `${this.data.type} ${this.data.css} ${this.data.icon}`,
 			type: "button",
 			onclick: (p: any) => this.onclick(p),
-			// key: this.data.key,
-			"data-key": this.data.key,
 		}, this.data.text);
 	}
 }

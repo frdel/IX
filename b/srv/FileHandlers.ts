@@ -22,6 +22,12 @@ export function setHandlers(router: lib.Oak.Router) {
 		ctx.response.body = css;
 	});
 
+	router.get(`/route/bundle.ts`, async function (ctx) {
+		const routes = await fetchRouteBundle();
+		ctx.response.type = "application/javascript";
+		ctx.response.body = routes;
+	});
+
 	//javascript and typescript files, here we do transpiling, bundling and caching
 	//todo merge path-to-regex into one
 	router.get(`/(.+)(\.js$)`, async function (ctx) {
@@ -104,6 +110,27 @@ export function setHandlers(router: lib.Oak.Router) {
 		return result;
 	}
 
+	//bundle all route files in /route together
+	async function fetchRouteBundle() {
+		//todo caching
+		const folder = filePath("route/");
+		const files = Deno.readDir(folder);
+		const promises: Promise<string>[] = [];
+		let result = [];
+		for await (const file of files) {
+			if (file.isFile && lib.Path.extname(file.name) == ".json") {
+				promises.push(Deno.readTextFile(filePath("route/" + file.name)));
+			}
+		}
+		const routeFiles = await Promise.all(promises);
+		for (const route of routeFiles) {
+			result.push(JSON.parse(route));
+		}
+
+		const script = `export default ${JSON.stringify(result)}`;
+		return script;
+	}
+
 	//todo caching and bundling
 	const scriptCache = new Map<string, string>();
 	const caching = Deno.args.indexOf("--ix-no-cache") < 0;
@@ -125,10 +152,7 @@ export function setHandlers(router: lib.Oak.Router) {
 		if (Object.keys(bun.files).length == 0) throw "404";
 
 		if (!bundle) {
-			const pos =
-				lib.Path.extname(path) == ".ts" || lib.Path.extname(path) == ".jsx"
-					? ".js"
-					: "";
+			const pos = lib.Path.extname(path) == ".ts" || lib.Path.extname(path) == ".jsx" ? ".js" : "";
 			const absPath = ("file://" +
 				lib.Path.resolve(path) + pos).replace(/ /g, "%20");
 			scriptCache.set(path, bun.files[absPath]);

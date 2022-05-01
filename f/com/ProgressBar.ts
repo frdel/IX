@@ -5,6 +5,8 @@ type Data = {
 	text?: string;
 	ratio: number;
 	css?: string;
+	striped?: boolean;
+	animated?: boolean;
 };
 
 export default class CopyMe extends Component<Data, Data>() {
@@ -24,9 +26,11 @@ export default class CopyMe extends Component<Data, Data>() {
 
 		return m(
 			"div.progress",
-			m(`.progress-bar.progress-bar-striped.progress-bar-animated[role='progressbar'][aria-valuenow='${val}'][aria-valuemin='0'][aria-valuemax='100']`, {
+			m(`.progress-bar[role='progressbar']`, {
 				"style": { "width": `${val}%` },
-				class: this.data.css || "",
+				class: ((this.data.css || "") +
+					(this.data.animated ? " progress-bar-animated" : "") +
+					(this.data.striped ? " progress-bar-striped" : "")).trim(),
 			}, this.data.text || this.defaultText()),
 		);
 	}

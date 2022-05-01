@@ -4,6 +4,7 @@ import Toolbar from "./Toolbar.ts";
 import Sidebar from "./Sidebar.ts";
 import Button from "./Button.ts";
 import Slider from "./Slider.ts";
+import FormField from "./FormField.ts";
 // import NavItem from "./NavItem.ts";
 
 export default function Page() {
@@ -60,7 +61,7 @@ export default function Page() {
 	return {
 		view: () => [
 			[
-				m(Toolbar),
+				Toolbar.m({ title: "Page1" }),
 				m(
 					"div.container-fluid",
 					m("div.row", [
@@ -122,6 +123,16 @@ export default function Page() {
 								"div.d-flex.justify-content-between.flex-wrap.flex-md-nowrap.align-items-center.pt-3.pb-2.mb-3.border-bottom",
 								m("div.grid", [
 									// m(Counter),
+
+									FormField.m({
+										label: "popis",
+										onChange: (val) => {
+											console.log(val);
+										},
+										onSubmit: (val) => {
+											alert(val);
+										},
+									}),
 
 									Slider.m(sd, (model) => {
 										cd.count = <number> model.value;

@@ -77,7 +77,7 @@ export default class Counter extends Component<Data, Input>() {
 			this.buildButtons(this.data.count),
 
 			Span.m({ text: this.data.count.toString(), css: "text-danger" }),
-			ProgressBar.m({ ratio: (this.data.count - this.data.min) / (this.data.max - this.data.min) }),
+			ProgressBar.m({ ratio: (this.data.count - this.data.min) / (this.data.max - this.data.min), striped:true, animated:true }),
 			Slider.m(
 				{
 					min: this.data.min,

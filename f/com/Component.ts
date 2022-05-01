@@ -6,10 +6,6 @@ export default function Component<D, I>() {
 		(model: D, key: string, value: any, previous: any): void;
 	}
 
-	interface LinkModels {
-		(fieldA: string, componentB: Component, fieldB: string): PreComponent;
-	}
-
 	type Meta = {
 		onChange?: OnChange;
 	};
