@@ -2,6 +2,7 @@ import m from "../html/Mithril.ts";
 import Component from "./Component.ts";
 import Button from "./Button.ts";
 import Toolbar from "./Toolbar.ts";
+import FormField from "./FormField.ts";
 
 type Data = {
 	text?: string;
@@ -25,17 +26,22 @@ export default class CopyMe extends Component<Data, Data>() {
 				"div.login.text-center",
 				m(
 					"main.form-signin",
-					m("form", [
+					// m("form",
+					[
 						// m("img.mb-4[src='/docs/5.1/assets/brand/bootstrap-logo.svg'][alt=''][width='72'][height='57']"),
 						m("h1.h3.mb-3.fw-normal", "Please sign in"),
-						m("div.form-floating", [
-							m("input.form-control[type='email'][id='floatingInput'][placeholder='name@example.com']"),
-							m("label[for='floatingInput']", "Email address"),
-						]),
-						m("div.form-floating", [
-							m("input.form-control[type='password'][id='floatingPassword'][placeholder='Password']"),
-							m("label[for='floatingPassword']", "Password"),
-						]),
+
+						FormField.m({ label: "Text", type: FormField.type.Text }),
+						FormField.m({ label: "Color", type: FormField.type.Color }),
+						FormField.m({ label: "DateTimeLocal", type: FormField.type.DateTimeLocal }),
+						FormField.m({ label: "Date", type: FormField.type.Date }),
+						FormField.m({ label: "Email", type: FormField.type.Email }),
+						// FormField.m({ label: "File", type: FormField.type.File }),
+						// FormField.m({ label: "Image", type: FormField.type.Image }),
+						FormField.m({ label: "Month", type: FormField.type.Month }),
+						FormField.m({ label: "Number", type: FormField.type.Number }),
+						FormField.m({ label: "Tel", type: FormField.type.Tel }),
+						FormField.m({ label: "Search", type: FormField.type.Search }),
 						m(
 							"div.checkbox.mb-3",
 							m("label", [
@@ -45,7 +51,8 @@ export default class CopyMe extends Component<Data, Data>() {
 						),
 						m("button.w-100.btn.btn-lg.btn-primary[type='submit']", "Sign in"),
 						m("p.mt-5.mb-3.text-muted", "© 2017–2021"),
-					]),
+					],
+					// ),
 				),
 			),
 		];
@@ -76,17 +83,25 @@ export default class CopyMe extends Component<Data, Data>() {
 		  z-index: 2;
 		}
 		
-		.form-signin input[type="email"] {
+		.form-signin form:first-of-type input {
 		  margin-bottom: -1px;
 		  border-bottom-right-radius: 0;
 		  border-bottom-left-radius: 0;
 		}
 		
-		.form-signin input[type="password"] {
+		.form-signin form:last-of-type input{
 		  margin-bottom: 10px;
 		  border-top-left-radius: 0;
 		  border-top-right-radius: 0;
 		}
+
+		.form-signin :not(form:first-of-type):not(form:last-of-type) input {
+			margin-bottom: -1px;
+			border-bottom-right-radius: 0;
+			border-bottom-left-radius: 0;
+			border-top-left-radius: 0;
+			border-top-right-radius: 0;
+		  }
 		`;
 	}
 }

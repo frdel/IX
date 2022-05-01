@@ -2,6 +2,7 @@ import m from "../html/Mithril.ts";
 import Component from "./Component.ts";
 
 type Data = {
+	type?: Type;
 	label?: string;
 	value?: string;
 	onInput?: Handler;
@@ -9,15 +10,33 @@ type Data = {
 	onSubmit?: Handler;
 };
 
+enum Type {
+	Password = "password",
+	Text = "text",
+	Date = "date",
+	DateTimeLocal = "datetime-local",
+	Color = "color",
+	Email = "email",
+	// File = "file",
+	// Image = "image",
+	Month = "month",
+	Number = "number",
+	Tel = "tel",
+	Search = "search",
+}
+
 interface Handler {
 	(value: string, event: Event): void;
 }
 
 export default class CopyMe extends Component<Data, Data>() {
+	static type = Type;
+
 	fixData() {
 		//default data
 		if (!this.data.label) this.data.label = "";
-		if (!this.data.value) this.data.value = "Text";
+		if (!this.data.value) this.data.value = "";
+		if (!this.data.type) this.data.type = Type.Text;
 	}
 
 	//input handler
@@ -33,17 +52,20 @@ export default class CopyMe extends Component<Data, Data>() {
 
 	//submit handler
 	onSubmit(e: Event) {
-		if (typeof this.data.onChange == "function") this.data.onChange(this.data.value || "", e);
+		// e.preventDefault();
+		if (typeof this.data.onSubmit == "function") this.data.onSubmit(this.data.value || "", e);
 	}
 
 	//render
 	render(vnode: any) {
 		return m("form.form-floating", {
-			submit: (e: Event) => {
+			onsubmit: (e: Event) => {
 				this.onSubmit(e);
 			},
 		}, [
-			m(`input.form-control[type='password'][id='floatingPassword'][placeholder='${this.data.label}']`, {
+			m(`input.form-control[id='floatingPassword${this.data.label}']`, {
+				type: this.data.type,
+				placeholder: this.data.label,
 				oninput: (e: Event) => {
 					this.onInput(e);
 				},

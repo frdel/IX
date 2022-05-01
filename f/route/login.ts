@@ -1,4 +1,6 @@
-{
-  "path": "#!/login",
-  "component": "com/Login.ts"
-}
+import Page from "../com/Page.ts";
+
+export default {
+	path: "#!",
+	component: Page,
+};
