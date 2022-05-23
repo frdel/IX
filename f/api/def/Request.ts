@@ -14,7 +14,7 @@ const postRaw = async function (
 
 const post = async function (
 	url: string,
-	data: any,
+	data?: any,
 	headers?: HeadersInit,
 ): Promise<any> {
 	headers = { "Content-Type": "application/json", ...headers };

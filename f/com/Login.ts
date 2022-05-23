@@ -30,7 +30,7 @@ export default class CopyMe extends Component<Data, Data>() {
 					[
 						// m("img.mb-4[src='/docs/5.1/assets/brand/bootstrap-logo.svg'][alt=''][width='72'][height='57']"),
 						m("h1.h3.mb-3.fw-normal", "Please sign in"),
-
+						
 						FormField.m({ label: "Text", type: FormField.type.Text }),
 						FormField.m({ label: "Color", type: FormField.type.Color }),
 						FormField.m({ label: "DateTimeLocal", type: FormField.type.DateTimeLocal }),

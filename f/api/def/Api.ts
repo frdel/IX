@@ -1,13 +1,22 @@
 import Request from "./Request.ts";
 
-export default abstract class Api<I, O> {
-  //call API from frontend
-  public async callApi(input: I): Promise<O> {
-    const apiName = this.getApiName();
-    const response = <O> await Request.post(apiName, input);
-    return response;
-  }
+export default function Api<Input, Output>(handlerFile: string) {
+	class Api {
+		public static async call(input: Input): Promise<Output> {
+			const api = new this();
+			input = api.editInput(input);
+			let output = <Output> await Request.post(handlerFile, input);
+			output = api.editOutput(output);
+			return output;
+		}
 
-  //return name of this API to be used in URL
-  abstract getApiName(): string;
+		editInput(input: Input): Input {
+			return input;
+		}
+
+		editOutput(output: Output): Output {
+			return output;
+		}
+	}
+	return Api;
 }

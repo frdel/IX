@@ -5,6 +5,9 @@ import Sidebar from "./Sidebar.ts";
 import Button from "./Button.ts";
 import Slider from "./Slider.ts";
 import FormField from "./FormField.ts";
+
+import Api from "../api/imp/Test1.ts";
+import Api2 from "../api/imp/Test2.ts";
 // import NavItem from "./NavItem.ts";
 
 export default function Page() {
@@ -137,6 +140,22 @@ export default function Page() {
 									Slider.m(sd, (model) => {
 										cd.count = <number> model.value;
 										cd2.count = cd.count;
+									}),
+
+									Button.m({
+										text: "Api",
+										type: Button.type.Success,
+										onclick: async () => {
+											console.log(JSON.stringify(await Api.call({ var1: "v1", var2: 2 })));
+										},
+									}),
+
+									Button.m({
+										text: "Api2",
+										type: Button.type.Info,
+										onclick: async () => {
+											console.log(JSON.stringify(await Api2.call({ var1: "v1", var2: 2 })));
+										},
 									}),
 									// Button.m({ text: "Btn", key: "abc" }),
 

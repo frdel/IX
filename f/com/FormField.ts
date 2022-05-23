@@ -1,6 +1,10 @@
 import m from "../html/Mithril.ts";
 import Component from "./Component.ts";
 
+/**
+ * description added
+ * on two lines
+ */
 type Data = {
 	type?: Type;
 	label?: string;
