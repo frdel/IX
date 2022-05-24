@@ -1,4 +1,5 @@
 import * as lib from "./lib.ts";
+import { Emit } from "https://deno.land/x/emit/mod.ts";
 
 export function setHandlers(router: lib.Oak.Router) {
 	const feFolder = lib.Path.resolve("./f");
@@ -139,7 +140,7 @@ export function setHandlers(router: lib.Oak.Router) {
 	async function fetchScript(path: string): Promise<string> {
 		if (caching && scriptCache.has(path)) return scriptCache.get(path) || "";
 
-		const bun = await Deno.emit(path, {
+		const bun = await Emit(path, {
 			bundle: bundle ? "module" : undefined,
 			check: false,
 			compilerOptions: {
