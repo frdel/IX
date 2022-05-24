@@ -1,5 +1,5 @@
 import * as lib from "./lib.ts";
-import { Emit } from "https://deno.land/x/emit/mod.ts";
+import * as Emit from "https://deno.land/x/emit/mod.ts";
 
 export function setHandlers(router: lib.Oak.Router) {
 	const feFolder = lib.Path.resolve("./f");
@@ -140,42 +140,61 @@ export function setHandlers(router: lib.Oak.Router) {
 	async function fetchScript(path: string): Promise<string> {
 		if (caching && scriptCache.has(path)) return scriptCache.get(path) || "";
 
-		const bun = await Emit(path, {
+		const emitter = bundle ? Emit.bundle : Emit.emit;
+
+		// if(bundle){
+
+		// }else{
+		// 	Emit.emit(path);
+		// }
+
+		// Emit.bundle("wd",{})
+
+		const url = new URL("../../f/index.ts", import.meta.url);
+
+		const bun = await emitter(url, {	allowRemote: true		
+			/*
 			bundle: bundle ? "module" : undefined,
 			check: false,
+
 			compilerOptions: {
+
 				removeComments: false,
 				alwaysStrict: true,
 				target: "es2015",
 			},
+			*/
 		});
 
-		if (Object.keys(bun.files).length == 0) throw "404";
+	
+		return "!";
 
-		if (!bundle) {
-			const pos = lib.Path.extname(path) == ".ts" || lib.Path.extname(path) == ".jsx" ? ".js" : "";
-			const absPath = ("file://" +
-				lib.Path.resolve(path) + pos).replace(/ /g, "%20");
-			scriptCache.set(path, bun.files[absPath]);
-			return bun.files[absPath];
-		} else {
-			const bundleFile = bun.files["deno:///bundle.js"];
-			// const mapFile = bun.files["deno:///bundle.js.map"];
-			const rpath = "file://" + lib.Path.resolve("./r/");
-			const map = JSON.parse(bun.files["deno:///bundle.js.map"]);
+		// if (Object.keys(bun.files).length == 0) throw "404";
 
-			for (const source of map.sources) {
-				const rel2 = lib.Path.relative(rpath, source);
+		// if (!bundle) {
+		// 	const pos = lib.Path.extname(path) == ".ts" || lib.Path.extname(path) == ".jsx" ? ".js" : "";
+		// 	const absPath = ("file://" +
+		// 		lib.Path.resolve(path) + pos).replace(/ /g, "%20");
+		// 	scriptCache.set(path, bun.files[absPath]);
+		// 	return bun.files[absPath];
+		// } else {
+		// 	const bundleFile = bun.files["deno:///bundle.js"];
+		// 	// const mapFile = bun.files["deno:///bundle.js.map"];
+		// 	const rpath = "file://" + lib.Path.resolve("./r/");
+		// 	const map = JSON.parse(bun.files["deno:///bundle.js.map"]);
 
-				if (rel2.startsWith("..")) {
-					console.log("NOK " + source);
-				} else {
-					console.log("OK " + source);
-				}
-			}
-			scriptCache.set(path, bundleFile);
-			return bundleFile;
-		}
+		// 	for (const source of map.sources) {
+		// 		const rel2 = lib.Path.relative(rpath, source);
+
+		// 		if (rel2.startsWith("..")) {
+		// 			console.log("NOK " + source);
+		// 		} else {
+		// 			console.log("OK " + source);
+		// 		}
+		// 	}
+		// 	scriptCache.set(path, bundleFile);
+		// 	return bundleFile;
+		// }
 	}
 
 	//normalize file path to point into frontend directory
