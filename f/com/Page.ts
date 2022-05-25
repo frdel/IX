@@ -152,7 +152,7 @@ export default function Page() {
 
 									Button.m({
 										text: "Api2",
-										type: Button.type.Info,
+										type: Button.type.Dark,
 										onclick: async () => {
 											console.log(JSON.stringify(await Api2.call({ var1: "v1", var2: 2 })));
 										},

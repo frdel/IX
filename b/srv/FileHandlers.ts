@@ -23,12 +23,6 @@ export function setHandlers(router: lib.Oak.Router) {
 		ctx.response.body = css;
 	});
 
-	router.get(`/route/bundle.ts`, async function (ctx) {
-		const routes = await fetchRouteBundle();
-		ctx.response.type = "application/javascript";
-		ctx.response.body = routes;
-	});
-
 	//javascript and typescript files, here we do transpiling, bundling and caching
 	//todo merge path-to-regex into one
 	router.get(`/(.+)(\.js$)`, async function (ctx) {
@@ -40,8 +34,7 @@ export function setHandlers(router: lib.Oak.Router) {
 
 	//handle JS or TS request
 	async function handleScript(ctx: any) {
-		const file = filePath(ctx.request.url.pathname);
-		ctx.response.body = await fetchScript(file);
+		ctx.response.body = await fetchScript(ctx.request.url.pathname);
 		ctx.response.type = `application/javascript`;
 	}
 
@@ -52,7 +45,7 @@ export function setHandlers(router: lib.Oak.Router) {
 		// ctx.response.type = lib.Lookup(ext);
 		// ctx.response.body = await Deno.readTextFile(file);
 		await ctx.send({
-			root: feFolder,
+			root: feFolder.toString(),
 			index: ctx.request.url.pathname,
 		});
 	});
@@ -61,7 +54,7 @@ export function setHandlers(router: lib.Oak.Router) {
 	async function fetchIndex() {
 		//landing page file paths
 		const htmlFile = filePath("html/index.html");
-		const jsFile = filePath("index.ts");
+		const jsFile = "index.ts";
 		const bsFile = filePath("html/bootstrap.bundle.min.js");
 
 		//load index html and js files
@@ -138,67 +131,46 @@ export function setHandlers(router: lib.Oak.Router) {
 	const bundle = Deno.args.indexOf("--ix-no-bundle") < 0;
 
 	async function fetchScript(path: string): Promise<string> {
-		if (caching && scriptCache.has(path)) return scriptCache.get(path) || "";
+		const file = filePath(path);
+		const url = fileUrl(file);
+		const urlHref = url.href;
 
-		const emitter = bundle ? Emit.bundle : Emit.emit;
+		if (caching && scriptCache.has(urlHref)) return scriptCache.get(urlHref) || "";
 
-		// if(bundle){
+		if (bundle) {
+			const bundle = await Emit.bundle(url, {
+				allowRemote: true,
+				compilerOptions: {
+					sourceMap: false,
+				},
+			});
 
-		// }else{
-		// 	Emit.emit(path);
-		// }
+			if (caching) scriptCache.set(urlHref, bundle.code);
 
-		// Emit.bundle("wd",{})
+			return bundle.code;
+		} else {
+			const scripts = await Emit.emit(url, {
+				allowRemote: true,
+				// cacheSetting: "reloadAll",
+			});
 
-		const url = new URL("../../f/index.ts", import.meta.url);
+			if (caching) {
+				for (const href in scripts) {
+					scriptCache.set(href, (<Record<string, string>> scripts)[href]);
+				}
+			}
 
-		const bun = await emitter(url, {	allowRemote: true		
-			/*
-			bundle: bundle ? "module" : undefined,
-			check: false,
-
-			compilerOptions: {
-
-				removeComments: false,
-				alwaysStrict: true,
-				target: "es2015",
-			},
-			*/
-		});
-
-	
-		return "!";
-
-		// if (Object.keys(bun.files).length == 0) throw "404";
-
-		// if (!bundle) {
-		// 	const pos = lib.Path.extname(path) == ".ts" || lib.Path.extname(path) == ".jsx" ? ".js" : "";
-		// 	const absPath = ("file://" +
-		// 		lib.Path.resolve(path) + pos).replace(/ /g, "%20");
-		// 	scriptCache.set(path, bun.files[absPath]);
-		// 	return bun.files[absPath];
-		// } else {
-		// 	const bundleFile = bun.files["deno:///bundle.js"];
-		// 	// const mapFile = bun.files["deno:///bundle.js.map"];
-		// 	const rpath = "file://" + lib.Path.resolve("./r/");
-		// 	const map = JSON.parse(bun.files["deno:///bundle.js.map"]);
-
-		// 	for (const source of map.sources) {
-		// 		const rel2 = lib.Path.relative(rpath, source);
-
-		// 		if (rel2.startsWith("..")) {
-		// 			console.log("NOK " + source);
-		// 		} else {
-		// 			console.log("OK " + source);
-		// 		}
-		// 	}
-		// 	scriptCache.set(path, bundleFile);
-		// 	return bundleFile;
-		// }
+			return (<Record<string, string>> scripts)[urlHref];
+		}
 	}
 
 	//normalize file path to point into frontend directory
 	function filePath(path: string): string {
 		return lib.Path.join(feFolder, path);
+	}
+
+	function fileUrl(path: string): URL {
+		// return "file://" + filePath(path);
+		return new URL(path, "file://");
 	}
 }
