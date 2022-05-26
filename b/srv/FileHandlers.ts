@@ -131,7 +131,7 @@ export function setHandlers(router: lib.Oak.Router) {
 	const bundle = Deno.args.indexOf("--ix-no-bundle") < 0;
 
 	async function fetchScript(path: string): Promise<string> {
-		const file = filePath(path);
+		const file = filePath(path)
 		const url = fileUrl(file);
 		const urlHref = url.href;
 
@@ -166,11 +166,16 @@ export function setHandlers(router: lib.Oak.Router) {
 
 	//normalize file path to point into frontend directory
 	function filePath(path: string): string {
-		return lib.Path.join(feFolder, path);
+		let fullPath = lib.Path.join(feFolder, path);
+		if(lib.Path.SEP=="\\") fullPath = toUnixPath(fullPath);
+		return fullPath;
 	}
 
 	function fileUrl(path: string): URL {
-		// return "file://" + filePath(path);
 		return new URL(path, "file://");
+	}
+
+	function toUnixPath(path: string): string {
+		return path.replace(/[\\/]+/g, "/").replace(/^([a-zA-Z]+:|\.\/)/, "");
 	}
 }
