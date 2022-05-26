@@ -155,6 +155,9 @@ export default function Page() {
 										type: Button.type.Dark,
 										onclick: async () => {
 											console.log(JSON.stringify(await Api2.call({ var1: "v1", var2: 2 })));
+											
+										const res = await Api2.call({var1:"444",var2:666});
+											alert(JSON.stringify(res));
 										},
 									}),
 									// Button.m({ text: "Btn", key: "abc" }),

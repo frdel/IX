@@ -127,47 +127,51 @@ export function setHandlers(router: lib.Oak.Router) {
 
 	//todo caching and bundling
 	const scriptCache = new Map<string, string>();
-	const caching = Deno.args.indexOf("--ix-no-cache") < 0;
-	const bundle = Deno.args.indexOf("--ix-no-bundle") < 0;
+	const dev = Deno.args.indexOf("--ix-dev") >= 0;
+	const caching = !dev;
+	const maps = dev;
 
 	async function fetchScript(path: string): Promise<string> {
-		const file = filePath(path)
+		if (caching && scriptCache.has(path)) return scriptCache.get(path) || "";
+
+		const file = filePath(path);
 		const url = fileUrl(file);
-		const urlHref = url.href;
 
-		if (caching && scriptCache.has(urlHref)) return scriptCache.get(urlHref) || "";
+		// if (true) {
+		const bnd = await Emit.bundle(url, {
+			allowRemote: true,
+			cacheSetting: caching ?  "use" : "reloadAll",
+			compilerOptions: {
+				sourceMap: maps,
+				// checkJs: false,
+				// inlineSourceMap: false,
+				// inlineSources: false,
+			},
+		});
 
-		if (bundle) {
-			const bundle = await Emit.bundle(url, {
-				allowRemote: true,
-				compilerOptions: {
-					sourceMap: false,
-				},
-			});
+		if (caching) scriptCache.set(path, bnd.code);
 
-			if (caching) scriptCache.set(urlHref, bundle.code);
+		return bnd.code;
+		// } else {
+		// 	const scripts = await Emit.emit(url, {
+		// 		allowRemote: true,
+		// 		// cacheSetting: "reloadAll",
+		// 	});
 
-			return bundle.code;
-		} else {
-			const scripts = await Emit.emit(url, {
-				allowRemote: true,
-				// cacheSetting: "reloadAll",
-			});
+		// 	if (caching) {
+		// 		for (const href in scripts) {
+		// 			scriptCache.set(href, (<Record<string, string>> scripts)[href]);
+		// 		}
+		// 	}
 
-			if (caching) {
-				for (const href in scripts) {
-					scriptCache.set(href, (<Record<string, string>> scripts)[href]);
-				}
-			}
-
-			return (<Record<string, string>> scripts)[urlHref];
-		}
+		// 	return (<Record<string, string>> scripts)[urlHref];
+		// }
 	}
 
 	//normalize file path to point into frontend directory
 	function filePath(path: string): string {
 		let fullPath = lib.Path.join(feFolder, path);
-		if(lib.Path.SEP=="\\") fullPath = toUnixPath(fullPath);
+		if (lib.Path.SEP == "\\") fullPath = toUnixPath(fullPath);
 		return fullPath;
 	}
 
