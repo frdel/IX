@@ -6,8 +6,6 @@ import Button from "./Button.ts";
 import Slider from "./Slider.ts";
 import FormField from "./FormField.ts";
 
-import Api from "../api/imp/Test1.ts";
-import Api2 from "../api/imp/Test2.ts";
 // import NavItem from "./NavItem.ts";
 
 export default function Page() {
@@ -64,7 +62,7 @@ export default function Page() {
 	return {
 		view: () => [
 			[
-				Toolbar.m({ title: "Page1" }),
+				Toolbar.m({ title: "Counters" }),
 				m(
 					"div.container-fluid",
 					m("div.row", [
@@ -142,25 +140,6 @@ export default function Page() {
 										cd2.count = cd.count;
 									}),
 
-									Button.m({
-										text: "Api",
-										type: Button.type.Success,
-										onclick: async () => {
-											console.log(JSON.stringify(await Api.call({ var1: "v1", var2: 2 })));
-										},
-									}),
-
-									Button.m({
-										text: "Api2",
-										type: Button.type.Dark,
-										onclick: async () => {
-											console.log(JSON.stringify(await Api2.call({ var1: "v1", var2: 2 })));
-											
-										const res = await Api2.call({var1:"444",var2:666});
-											alert(JSON.stringify(res));
-										},
-									}),
-									// Button.m({ text: "Btn", key: "abc" }),
 
 									m("div.row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-2 row-cols-xl-3", [
 										m("div.col.mb-3", Counter.m(cd)),

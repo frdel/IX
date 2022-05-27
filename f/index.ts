@@ -1,6 +1,7 @@
 import m from "./html/Mithril.ts";
 import Page from "./com/Page.ts";
 import Login from "./com/Login.ts";
+import Api from "./com/ApiTest.ts";
 
 // const Page = await import("./com/Page.ts");
 // const Login = await import("./com/Login.ts");
@@ -19,4 +20,5 @@ console.log("test");
 m.route(document.body, "/home", {
 	"/home": Page,
 	"/login": Login,
+	"/api": Api,
 });

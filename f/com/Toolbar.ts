@@ -51,9 +51,11 @@ export default class CopyMe extends Component<Data, Data>() {
 					NavBarItem.m({
 						text: "",
 						linkCSS: "bi-arrow-left-square",
-						href: "#",
+						href: "#!/",
 					}),
-					NavBarItem.m({ text: "Exit", href: "#" }),
+					NavBarItem.m({ text: "Counters", href: "#!/" }),
+					NavBarItem.m({ text: "Login", href: "#!/login" }),
+					NavBarItem.m({ text: "Api", href: "#!/api" }),
 				],
 			),
 		];
