@@ -1,5 +1,6 @@
 import * as lib from "./lib.ts";
 import * as Emit from "https://deno.land/x/emit/mod.ts";
+import { parse, print } from "https://x.nest.land/swc@0.1.4/mod.ts";
 
 export function setHandlers(router: lib.Oak.Router) {
 	const feFolder = lib.Path.resolve("./f");
@@ -45,7 +46,7 @@ export function setHandlers(router: lib.Oak.Router) {
 		// ctx.response.type = lib.Lookup(ext);
 		// ctx.response.body = await Deno.readTextFile(file);
 		await ctx.send({
-			root: feFolder.toString(),
+			root: feFolder,
 			index: ctx.request.url.pathname,
 		});
 	});
@@ -140,7 +141,7 @@ export function setHandlers(router: lib.Oak.Router) {
 		// if (true) {
 		const bnd = await Emit.bundle(url, {
 			allowRemote: true,
-			cacheSetting: caching ?  "use" : "reloadAll",
+			cacheSetting: caching ? "use" : "reloadAll",
 			compilerOptions: {
 				sourceMap: maps,
 				// checkJs: false,
@@ -151,21 +152,22 @@ export function setHandlers(router: lib.Oak.Router) {
 
 		if (caching) scriptCache.set(path, bnd.code);
 
+		//MINIFY:
+		// const ast = parse(bnd.code, {
+		// 	target: "es2015",
+		// 	syntax: "ecmascript",
+		// 	comments: false,
+		// });
+
+		// const { code } = print(ast, {
+		// 	minify: true,
+		// 	module: {
+		// 		type: "commonjs",
+		// 	},
+		// });
+		// return code;
+
 		return bnd.code;
-		// } else {
-		// 	const scripts = await Emit.emit(url, {
-		// 		allowRemote: true,
-		// 		// cacheSetting: "reloadAll",
-		// 	});
-
-		// 	if (caching) {
-		// 		for (const href in scripts) {
-		// 			scriptCache.set(href, (<Record<string, string>> scripts)[href]);
-		// 		}
-		// 	}
-
-		// 	return (<Record<string, string>> scripts)[urlHref];
-		// }
 	}
 
 	//normalize file path to point into frontend directory

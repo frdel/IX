@@ -20,7 +20,10 @@ export default class ApiTest extends Component<unknown, unknown>() {
 					text: "Api",
 					type: Button.type.Success,
 					onclick: async () => {
-						console.log(JSON.stringify(await Api.call({ var1: "v1", var2: 2 })));
+
+						const apiData = await Api.call({ var1: "v1", var2: 2 })
+
+						console.log(JSON.stringify(apiData));
 					},
 				}),
 
